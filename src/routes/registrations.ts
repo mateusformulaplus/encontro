@@ -1,10 +1,10 @@
 import { FastifyInstance, FastifyPluginOptions } from 'fastify';
-import { RegistrationService } from '../services/registrationService';
+import { RegistrationService } from '../services/registrationService.js';
 import {
   GoogleSheetsRegistrationError,
   isSheetRegistrationPayload,
   saveRegistrationToGoogleSheets,
-} from '../services/googleSheetsService';
+} from '../services/googleSheetsService.js';
 
 export async function registrationRoutes(fastify: FastifyInstance, _opts: FastifyPluginOptions) {
   // Create registration in Google Sheets without persisting it in the database.

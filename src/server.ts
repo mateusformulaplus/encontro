@@ -3,8 +3,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import { registrationRoutes } from './routes/registrations';
-import { testDatabaseConnection, isDatabaseConfigured } from './db/prisma';
+import { registrationRoutes } from './routes/registrations.js';
+import { testDatabaseConnection, isDatabaseConfigured } from './db/prisma.js';
 
 dotenv.config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../.env') });
 

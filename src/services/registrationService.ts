@@ -1,4 +1,4 @@
-import { prisma, isDatabaseConfigured } from '../db/prisma';
+import { prisma, isDatabaseConfigured } from '../db/prisma.js';
 import fs from 'fs';
 import path from 'path';
 

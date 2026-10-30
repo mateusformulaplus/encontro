@@ -26,3 +26,13 @@ Cada linha começa com data, código de inscrição e status **PENDENTE**, além
 O servidor Fastify continua sendo o intermediário para manter o token fora do navegador. `POST /api/registrations` grava na planilha; se a integração não estiver configurada ou a gravação falhar, a API retorna erro e o formulário não mostra sucesso. As rotas de consulta antigas do Prisma não recebem essas novas inscrições.
 
 Para desenvolvimento local, copie `backend/.env.example` para `backend/.env`, configure as duas variáveis e inicie o backend com `npm run dev:backend`.
+
+## Deploy no Render
+
+Este repositório já tem o `package.json` na raiz. No Render, deixe **Root Directory** vazio, selecione **Node** e use:
+
+- **Build Command:** `npm install && npm run build`
+- **Start Command:** `npm start`
+- **Node:** versão 20 ou superior
+
+O build gera o cliente Prisma e compila o servidor TypeScript para `dist/`. Cadastre `GOOGLE_SHEETS_WEB_APP_URL` e `GOOGLE_SHEETS_WEB_APP_TOKEN` nas variáveis de ambiente do serviço. `DATABASE_URL` e `DIRECT_URL` só são necessárias para os endpoints legados que consultam o banco.
