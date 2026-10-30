@@ -1,0 +1,138 @@
+// Prisma Schema for Supabase (PostgreSQL)
+// 72º Encontro de Casais — Ministério Famílias Integradas (INVA)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum EstadoCivil {
+  CASADOS
+  COMPANHEIROS
+  SOLTEIROS
+  DIVORCIADOS
+}
+
+enum StatusPagamento {
+  PENDENTE
+  CONFIRMADO
+  CANCELADO
+  ESTORNADO
+}
+
+model Inscription {
+  id                   String          @id @default(uuid()) @db.Uuid
+  voucherCode          String          @unique @map("voucher_code") @db.VarChar(50)
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedAt            DateTime        @updatedAt @map("updated_at")
+
+  // Informações do Marido
+  maridoNome           String          @map("marido_nome") @db.VarChar(255)
+  maridoNascimento     DateTime        @map("marido_nascimento") @db.Date
+  maridoCelular        String          @map("marido_celular") @db.VarChar(30)
+  maridoEmail          String?         @map("marido_email") @db.VarChar(255)
+  maridoRedeSocial     String?         @map("marido_rede_social") @db.VarChar(100)
+  maridoProfissao      String          @map("marido_profissao") @db.VarChar(150)
+  maridoMembroIgreja   Boolean         @default(true) @map("marido_membro_igreja")
+  maridoQualIgreja     String          @map("marido_qual_igreja") @db.VarChar(200)
+  maridoAfastado       Boolean         @default(false) @map("marido_afastado")
+  maridoDieta          String?         @map("marido_dieta") @db.Text
+
+  // Filiação Marido
+  maridoPaiNome        String?         @map("marido_pai_nome") @db.VarChar(255)
+  maridoMaeNome        String?         @map("marido_mae_nome") @db.VarChar(255)
+  maridoPaisTelefones  String?         @map("marido_pais_telefones") @db.VarChar(100)
+
+  // Informações da Esposa
+  esposaNome           String          @map("esposa_nome") @db.VarChar(255)
+  esposaNascimento     DateTime        @map("esposa_nascimento") @db.Date
+  esposaCelular        String          @map("esposa_celular") @db.VarChar(30)
+  esposaEmail          String?         @map("esposa_email") @db.VarChar(255)
+  esposaRedeSocial     String?         @map("esposa_rede_social") @db.VarChar(100)
+  esposaProfissao      String          @map("esposa_profissao") @db.VarChar(150)
+  esposaMembroIgreja   Boolean         @default(true) @map("esposa_membro_igreja")
+  esposaQualIgreja     String          @map("esposa_qual_igreja") @db.VarChar(200)
+  esposaAfastada       Boolean         @default(false) @map("esposa_afastada")
+  esposaDieta          String?         @map("esposa_dieta") @db.Text
+
+  // Filiação Esposa
+  esposaPaiNome        String?         @map("esposa_pai_nome") @db.VarChar(255)
+  esposaMaeNome        String?         @map("esposa_mae_nome") @db.VarChar(255)
+  esposaPaisTelefones  String?         @map("esposa_pais_telefones") @db.VarChar(100)
+
+  // Endereço Residencial
+  endereco             String          @db.VarChar(255)
+  numero               String          @db.VarChar(50)
+  bairro               String          @db.VarChar(100)
+  cidade               String          @db.VarChar(100)
+  estado               String          @default("RJ") @db.VarChar(10)
+
+  // Dados da União & Grupo de Vida
+  estadoCivil          EstadoCivil     @default(CASADOS) @map("estado_civil")
+  dataCasamento        DateTime        @map("data_casamento") @db.Date
+  fazParteGvc          Boolean         @default(true) @map("faz_parte_gvc")
+  liderGvcNome         String?         @map("lider_gvc_nome") @db.VarChar(200)
+  liderGvcTelefone     String?         @map("lider_gvc_telefone") @db.VarChar(50)
+
+  // Visita Pastoral de Acolhimento
+  visitaDiaSemana      String?         @map("visita_dia_semana") @db.VarChar(50)
+  visitaHorario        String?         @map("visita_horario") @db.VarChar(50)
+
+  // Pesquisa de Divulgação
+  comoSoube            String          @map("como_soube") @db.VarChar(150)
+  amigoNome            String?         @map("amigo_nome") @db.VarChar(200)
+  amigoTelefone        String?         @map("amigo_telefone") @db.VarChar(50)
+
+  // Status Financeiro & PagBank
+  lote                 String          @default("1º LOTE") @db.VarChar(50)
+  valorCentavos        Int             @default(99000) @map("valor_centavos")
+  statusPagamento      StatusPagamento @default(PENDENTE) @map("status_pagamento")
+  pagbankTransacaoId   String?         @map("pagbank_transacao_id") @db.VarChar(150)
+  sincronizadoSheets   Boolean         @default(false) @map("sincronizado_sheets")
+
+  // Relações
+  filhos               Filho[]
+
+  @@index([voucherCode])
+  @@index([maridoCelular])
+  @@index([esposaCelular])
+  @@index([statusPagamento])
+  @@index([createdAt])
+  @@map("inscriptions")
+}
+
+model Filho {
+  id            String       @id @default(uuid()) @db.Uuid
+  inscriptionId String       @map("inscription_id") @db.Uuid
+  nome          String       @db.VarChar(255)
+  idade         Int?
+  celular       String?      @db.VarChar(50)
+  observacoes   String?      @db.Text
+  createdAt     DateTime     @default(now()) @map("created_at")
+
+  inscription   Inscription  @relation(fields: [inscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([inscriptionId])
+  @@map("children")
+}
+
+model Evento {
+  id              String    @id @default(uuid()) @db.Uuid
+  nome            String    @default("72º Encontro de Casais INVA") @db.VarChar(255)
+  dataInicio      DateTime  @map("data_inicio") @db.Date
+  dataFim         DateTime  @map("data_fim") @db.Date
+  localNome       String    @default("Casarão Terra Santa") @map("local_nome") @db.VarChar(255)
+  cidade          String    @default("Itaboraí") @db.VarChar(100)
+  estado          String    @default("RJ") @db.VarChar(10)
+  valorLote1      Int       @default(99000) @map("valor_lote1")
+  limiteCasais    Int       @default(80) @map("limite_casais")
+  inscricoesAbertas Boolean @default(true) @map("inscricoes_abertas")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@map("events")
+}

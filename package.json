@@ -1,0 +1,27 @@
+{
+  "name": "encontro-casais-inva-backend",
+  "version": "1.0.0",
+  "description": "Backend Fastify + Prisma (Supabase PostgreSQL) para o 72º Encontro de Casais INVA",
+  "main": "src/server.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.2",
+    "@prisma/client": "^6.4.1",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "prisma": "^6.4.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.8.0"
+  }
+}
